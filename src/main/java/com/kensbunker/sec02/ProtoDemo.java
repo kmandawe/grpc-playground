@@ -8,8 +8,28 @@ public class ProtoDemo {
   private static final Logger LOG = LoggerFactory.getLogger(ProtoDemo.class);
 
   public static void main(String[] args) {
-    var person = Person.newBuilder().setName("Sam").setAge(12).build();
+    var person1 = createPerson();
+    var person2 = createPerson();
 
-    LOG.info("Person: {}", person);
+    // compare
+    LOG.info("equals {}", person1.equals(person2));
+    LOG.info("== {}", person1 == person2);
+
+    // mutable? No
+//    person1.setName("mike");
+
+    var person3 = person1.toBuilder().setName("mike").build();
+    LOG.info("equals {}", person1.equals(person3));
+    LOG.info("== {}", person1 == person3);
+    LOG.info("person: {}", person3);
+
+    // null?
+//    var person4 = person1.toBuilder().setName(null).build();
+    var person4 = person1.toBuilder().clearName().build();
+    LOG.info("person: {}", person4);
+  }
+
+  private static Person createPerson() {
+    return Person.newBuilder().setName("Sam").setAge(12).build();
   }
 }
