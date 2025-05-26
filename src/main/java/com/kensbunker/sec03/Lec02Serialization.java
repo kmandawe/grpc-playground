@@ -14,14 +14,18 @@ public class Lec02Serialization {
   public static void main(String[] args) throws IOException {
     var person =
         Person.newBuilder()
-            .setLastName("sam")
-            .setAge(12)
-            .setEmail("sam@gmail.com")
-            .setEmployed(true)
-            .setSalary(1000.2345)
-            .setBankAccountNumber(123456789012L)
-            .setBalance(-10000)
+//            .setLastName("sam")
+//            .setAge(12)
+//            .setEmail("sam@gmail.com")
+            .setEmployed(false)
+//            .setSalary(1000.2345)
+//            .setBankAccountNumber(123456789012L)
+//            .setBalance(-10000)
             .build();
+
+    /*
+       { "employed": true}
+     */
     serialize(person);
     LOG.info("{}", deserialize());
     LOG.info("equals: {}", person.equals(deserialize()));
