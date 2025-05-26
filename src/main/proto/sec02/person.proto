@@ -4,8 +4,12 @@ package sec02;
 
 option java_multiple_files = true;
 option java_package = "com.kensbunker.models.sec02";
-
+/*
+    multi-line comment
+    This is my proto
+ */
 message Person {
+  // single line comment
   string name = 1;
   int32 age = 2;
 }
