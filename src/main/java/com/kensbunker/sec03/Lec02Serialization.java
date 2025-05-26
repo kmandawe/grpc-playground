@@ -7,8 +7,8 @@ import java.nio.file.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Lec01Serialization {
-  private static final Logger LOG = LoggerFactory.getLogger(Lec01Serialization.class);
+public class Lec02Serialization {
+  private static final Logger LOG = LoggerFactory.getLogger(Lec02Serialization.class);
   private static final Path PATH = Path.of("person.out");
 
   public static void main(String[] args) throws IOException {
