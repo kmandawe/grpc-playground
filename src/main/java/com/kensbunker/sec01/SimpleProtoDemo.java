@@ -1,6 +1,6 @@
 package com.kensbunker.sec01;
 
-import com.kensbunker.models.PersonOuterClass;
+import com.kensbunker.models.sec01.PersonOuterClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
