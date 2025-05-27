@@ -6,6 +6,7 @@ import com.kensbunker.models.sec06.BankServiceGrpc;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
 import java.time.Duration;
+import java.util.concurrent.ExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,23 +15,15 @@ public class GrpcClient {
 
   public static void main(String[] args) throws InterruptedException {
     var channel = ManagedChannelBuilder.forAddress("localhost", 6565).usePlaintext().build();
-    var stub = BankServiceGrpc.newStub(channel);
-    stub.getAccountBalance(BalanceCheckRequest.newBuilder().setAccountNumber(2).build(), new StreamObserver<AccountBalance>() {
-      @Override
-      public void onNext(AccountBalance accountBalance) {
-        LOG.info("accountBalance: {}", accountBalance);
-      }
+    var stub = BankServiceGrpc.newFutureStub(channel);
+    var future = stub.getAccountBalance(BalanceCheckRequest.newBuilder().setAccountNumber(2).build());
 
-      @Override
-      public void onError(Throwable throwable) {
-
-      }
-
-      @Override
-      public void onCompleted() {
-        LOG.info("completed");
-      }
-    });
+    try {
+      var balance = future.get();
+      LOG.info("balance: {}", balance);
+    } catch (ExecutionException e) {
+      throw new RuntimeException(e);
+    }
 
     LOG.info("done");
     Thread.sleep(Duration.ofSeconds(1));
