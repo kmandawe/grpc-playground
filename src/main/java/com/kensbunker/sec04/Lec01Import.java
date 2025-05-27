@@ -15,6 +15,7 @@ public class Lec01Import {
     var car = Car.newBuilder().setBodyStyle(BodyStyle.COUPE).build();
     var person =
         Person.newBuilder().setName("sam").setAge(12).setAddress(address).setCar(car).build();
+    LOG.info("has age? {}", person.hasAge());
     LOG.info("person: {}", person);
   }
 }
