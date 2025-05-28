@@ -20,6 +20,10 @@ public class AccountRepository {
     return Collections.unmodifiableMap(DB);
   }
 
+  public static void addAmount(int accountNumber, int amount) {
+    DB.computeIfPresent(accountNumber, (k, v) -> v + amount);
+  }
+
   public static void decuctAmount(int accountNumber, int amount) {
     DB.computeIfPresent(accountNumber, (k, v) -> v - amount);
   }
