@@ -6,19 +6,17 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import com.google.common.util.concurrent.Uninterruptibles;
 import com.kensbunker.models.sec06.AccountBalance;
 import com.kensbunker.models.sec06.DepositRequest;
-import com.kensbunker.models.sec06.Money;
 import com.kensbunker.test.common.ResponseObserver;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
 
-public class Lec06ClientStreamingTest extends AbstractTest {
+public class Lec04ClientStreamingTest extends AbstractTest {
 
   @Test
   public void depositTest() {
 
     var responseObserver = ResponseObserver.<AccountBalance>create();
-    var requestObserver = this.asyncStub.deposit(responseObserver);
+    var requestObserver = this.bankStub.deposit(responseObserver);
 
     // initial message - account number
     requestObserver.onNext(DepositRequest.newBuilder().setAccountNumber(5).build());
