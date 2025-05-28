@@ -1,13 +1,13 @@
 package com.kensbunker.test.sec06;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.google.protobuf.Empty;
 import com.kensbunker.models.sec06.AccountBalance;
+import com.kensbunker.models.sec06.AllAccountsResponse;
 import com.kensbunker.models.sec06.BalanceCheckRequest;
-import io.grpc.stub.StreamObserver;
-import java.util.concurrent.CountDownLatch;
-import javax.xml.transform.sax.SAXResult;
+import com.kensbunker.test.common.ResponseObserver;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,39 +17,23 @@ public class Lec02UnaryAsyncClientTest extends AbstractTest {
 
   @Test
   public void getBalanceTest() throws InterruptedException {
-    var request = BalanceCheckRequest.newBuilder()
-        .setAccountNumber(1)
-        .build();
-    var latch = new CountDownLatch(1);
-    this.asyncStub.getAccountBalance(request, new StreamObserver<AccountBalance>() {
-      @Override
-      public void onNext(AccountBalance accountBalance) {
-        LOG.info("async balance received: {}", accountBalance);
-        try {
-          assertEquals(99, accountBalance.getBalance());
-        } finally{
-          latch.countDown();
-        }
+    var request = BalanceCheckRequest.newBuilder().setAccountNumber(1).build();
 
-      }
-
-      @Override
-      public void onError(Throwable throwable) {
-
-      }
-
-      @Override
-      public void onCompleted() {
-
-      }
-    });
-    latch.await();
+    var observer = ResponseObserver.<AccountBalance>create();
+    this.asyncStub.getAccountBalance(request, observer);
+    observer.await();
+    assertEquals(1, observer.getItems().size());
+    assertEquals(100, observer.getItems().getFirst().getBalance());
+    assertNull(observer.getThrowable());
   }
 
   @Test
   public void getAllAccountsTest() {
-    var accounts = this.blockingStub.getAllAccounts(Empty.getDefaultInstance());
-    accounts.getAccountsList().forEach(account -> LOG.info("account: {}", account));
-    assertEquals(10, accounts.getAccountsCount());
+    var observer = ResponseObserver.<AllAccountsResponse>create();
+    this.asyncStub.getAllAccounts(Empty.getDefaultInstance(), observer);
+    observer.await();
+    assertEquals(1, observer.getItems().size());
+    assertEquals(10, observer.getItems().getFirst().getAccountsCount());
+    assertNull(observer.getThrowable());
   }
 }
