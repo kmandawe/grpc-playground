@@ -2,6 +2,7 @@ package com.kensbunker.test.sec06;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.google.protobuf.Empty;
 import com.kensbunker.models.sec06.BalanceCheckRequest;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -18,5 +19,12 @@ public class Lec01UnaryBlockingClientTest extends AbstractTest {
     var balance = this.blockingStub.getAccountBalance(request);
     LOG.info("unary balance received: {}", balance);
     assertEquals(100, balance.getBalance());
+  }
+
+  @Test
+  public void getAllAccountsTest() {
+    var accounts = this.blockingStub.getAllAccounts(Empty.getDefaultInstance());
+    accounts.getAccountsList().forEach(account -> LOG.info("account: {}", account));
+    assertEquals(10, accounts.getAccountsCount());
   }
 }
