@@ -3,10 +3,7 @@ package com.kensbunker.test.sec06;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import com.google.protobuf.Empty;
-import com.kensbunker.models.sec06.AccountBalance;
-import com.kensbunker.models.sec06.AllAccountsResponse;
-import com.kensbunker.models.sec06.BalanceCheckRequest;
+import com.kensbunker.models.sec06.Money;
 import com.kensbunker.models.sec06.WithdrawRequest;
 import com.kensbunker.test.common.ResponseObserver;
 import org.junit.jupiter.api.Test;
@@ -27,5 +24,17 @@ public class Lec03ServerStreamingClientTest extends AbstractTest {
       count++;
     }
     assertEquals(2, count);
+  }
+
+  @Test
+  public void asyncClientWithdrawTest() {
+    var request = WithdrawRequest.newBuilder().setAccountNumber(2).setAmount(20).build();
+    var observer = ResponseObserver.<Money>create();
+    this.asyncStub.withdraw(request, observer);
+
+    observer.await();
+    assertEquals(2, observer.getItems().size());
+    assertEquals(10, observer.getItems().getFirst().getAmount());
+    assertNull(observer.getThrowable());
   }
 }
