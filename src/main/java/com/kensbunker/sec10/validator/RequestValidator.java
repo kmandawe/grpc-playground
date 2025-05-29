@@ -1,29 +1,46 @@
 package com.kensbunker.sec10.validator;
 
+import com.kensbunker.models.sec10.ErrorMessage;
+import com.kensbunker.models.sec10.ValidationCode;
+import io.grpc.Metadata;
 import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
+import io.grpc.protobuf.ProtoUtils;
 import java.util.Optional;
 
 public class RequestValidator {
 
-  public static Optional<Status> validateAccount(int accountNumber){
-    if(accountNumber > 0 && accountNumber < 11){
+  private static final Metadata.Key<ErrorMessage> ERROR_MESSAGE_KEY =
+      ProtoUtils.keyForProto(ErrorMessage.getDefaultInstance());
+
+  public static Optional<StatusRuntimeException> validateAccount(int accountNumber) {
+    if (accountNumber > 0 && accountNumber < 11) {
       return Optional.empty();
     }
-    return Optional.of(Status.INVALID_ARGUMENT.withDescription("account number should be between 1 and 10"));
+    var metadata = toMetadata(ValidationCode.INVALID_ACCOUNT);
+    return Optional.of(Status.INVALID_ARGUMENT.asRuntimeException(metadata));
   }
 
-  public static Optional<Status> isAmountDivisibleBy10(int amount){
-    if(amount > 0 && amount % 10 == 0){
+  public static Optional<StatusRuntimeException> isAmountDivisibleBy10(int amount) {
+    if (amount > 0 && amount % 10 == 0) {
       return Optional.empty();
     }
-    return Optional.of(Status.INVALID_ARGUMENT.withDescription("requested amount should be 10 multiples"));
+    var metadata = toMetadata(ValidationCode.INVALID_AMOUNT);
+    return Optional.of(Status.INVALID_ARGUMENT.asRuntimeException(metadata));
   }
 
-  public static Optional<Status> hasSufficientBalance(int amount, int balance){
-    if(amount <= balance){
+  public static Optional<StatusRuntimeException> hasSufficientBalance(int amount, int balance) {
+    if (amount <= balance) {
       return Optional.empty();
     }
-    return Optional.of(Status.FAILED_PRECONDITION.withDescription("insufficient balance"));
+    var metadata = toMetadata(ValidationCode.INSUFFICIENT_BALANCE);
+    return Optional.of(Status.FAILED_PRECONDITION.asRuntimeException(metadata));
   }
 
+  private static Metadata toMetadata(ValidationCode code) {
+    var metadata = new Metadata();
+    var errorMessage = ErrorMessage.newBuilder().setValidationCode(code).build();
+    metadata.put(ERROR_MESSAGE_KEY, errorMessage);
+    return metadata;
+  }
 }

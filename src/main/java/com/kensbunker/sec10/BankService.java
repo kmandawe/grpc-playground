@@ -18,7 +18,6 @@ public class BankService extends BankServiceGrpc.BankServiceImplBase {
   public void getAccountBalance(
       BalanceCheckRequest request, StreamObserver<AccountBalance> responseObserver) {
     RequestValidator.validateAccount(request.getAccountNumber())
-        .map(Status::asRuntimeException)
         .ifPresentOrElse(
             responseObserver::onError, () -> sendAccountBalance(request, responseObserver));
   }
@@ -41,7 +40,6 @@ public class BankService extends BankServiceGrpc.BankServiceImplBase {
             () ->
                 RequestValidator.hasSufficientBalance(
                     request.getAmount(), AccountRepository.getBalance(request.getAccountNumber())))
-        .map(Status::asRuntimeException)
         .ifPresentOrElse(responseObserver::onError, () -> sendMoney(request, responseObserver));
   }
 
