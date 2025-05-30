@@ -38,7 +38,7 @@ public class Lec03WaitForReadyTest extends AbstractChannelTest {
   public void blockingDeadlineTest() {
     LOG.info("sending the request");
     var request = WithdrawRequest.newBuilder().setAccountNumber(1).setAmount(50).build();
-    var iterator = this.bankBlockingStub.withWaitForReady().withdraw(request);
+    var iterator = this.bankBlockingStub.withWaitForReady().withDeadline(Deadline.after(8, TimeUnit.SECONDS)).withdraw(request);
     while (iterator.hasNext()) {
       LOG.info("{}", iterator.next());
     }
