@@ -23,6 +23,7 @@ public class BankService extends BankServiceGrpc.BankServiceImplBase {
   @Override
   public void getAccountBalance(
       BalanceCheckRequest request, StreamObserver<AccountBalance> responseObserver) {
+    LOG.info("request received: account number = {}", request.getAccountNumber());
     var accountNumber = request.getAccountNumber();
     var balance = AccountRepository.getBalance(accountNumber);
     var accountBalance =

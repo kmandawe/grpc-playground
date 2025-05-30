@@ -7,7 +7,6 @@ import io.grpc.ServerServiceDefinition;
 import io.grpc.ServiceDescriptor;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,11 +24,7 @@ public class GrpcServer {
   }
 
   public static GrpcServer create(int port, BindableService... services) {
-    var builder =
-        ServerBuilder.forPort(port)
-            .keepAliveTime(10, TimeUnit.SECONDS)
-            .keepAliveTimeout(1, TimeUnit.SECONDS)
-            .maxConnectionIdle(25, TimeUnit.SECONDS);
+    var builder = ServerBuilder.forPort(port);
     Arrays.asList(services).forEach(builder::addService);
     return new GrpcServer(builder.build());
   }
