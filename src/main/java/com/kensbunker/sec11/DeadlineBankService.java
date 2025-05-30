@@ -7,6 +7,7 @@ import com.kensbunker.models.sec11.BankServiceGrpc;
 import com.kensbunker.models.sec11.Money;
 import com.kensbunker.models.sec11.WithdrawRequest;
 import com.kensbunker.sec11.repository.AccountRepository;
+import io.grpc.Context;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import java.util.concurrent.TimeUnit;
@@ -44,13 +45,14 @@ public class DeadlineBankService extends BankServiceGrpc.BankServiceImplBase {
       return;
     }
 
-    for (int i = 0; i < requestedAmount / 10; i++) {
+    for (int i = 0; i < (requestedAmount / 10) && !Context.current().isCancelled(); i++) {
       var money = Money.newBuilder().setAmount(10).build();
       responseObserver.onNext(money);
       LOG.info("money sent {}", money);
       AccountRepository.decuctAmount(accountNumber, 10);
       Uninterruptibles.sleepUninterruptibly(1, TimeUnit.SECONDS);
     }
+    LOG.info("streaming completed");
     responseObserver.onCompleted();
   }
 }
