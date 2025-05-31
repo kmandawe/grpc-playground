@@ -6,6 +6,7 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.slf4j.Logger;
@@ -23,6 +24,7 @@ public class Lec07LoadBalancingDemoTest {
     this.bankBlockingStub = BankServiceGrpc.newBlockingStub(channel);
   }
 
+  @Disabled("For load balancing demo only")
   @Test
   public void loadBalancingDemo() {
     for(int i = 1; i <= 10; i++) {
