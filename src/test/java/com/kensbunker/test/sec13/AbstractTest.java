@@ -1,5 +1,7 @@
 package com.kensbunker.test.sec13;
 
+import com.kensbunker.common.GrpcServer;
+import com.kensbunker.sec13.BankService;
 import io.grpc.netty.shaded.io.grpc.netty.GrpcSslContexts;
 import io.grpc.netty.shaded.io.netty.handler.ssl.SslContext;
 import io.grpc.netty.shaded.io.netty.handler.ssl.SslContextBuilder;
@@ -8,6 +10,8 @@ import java.security.KeyStore;
 import java.util.concurrent.Callable;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -15,6 +19,22 @@ public abstract class AbstractTest {
   private static final Path KEY_STORE = Path.of("src/test/resources/certs/grpc.keystore.jks");
   private static final Path TRUST_STORE = Path.of("src/test/resources/certs/grpc.truststore.jks");
   private static final char[] PASSWORD = "changeit".toCharArray();
+  private final GrpcServer grpcServer =
+      GrpcServer.create(
+          6565,
+          b -> {
+            b.addService(new BankService()).sslContext(serverSslContext());
+          });
+
+  @BeforeAll
+  public void start() {
+    this.grpcServer.start();
+  }
+
+  @AfterAll
+  public void stop() {
+    this.grpcServer.stop();
+  }
 
   protected SslContext serverSslContext() {
     return handleException(
