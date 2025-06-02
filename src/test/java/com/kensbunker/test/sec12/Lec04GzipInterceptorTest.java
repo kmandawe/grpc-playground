@@ -6,7 +6,6 @@ import com.kensbunker.test.sec12.interceptors.GzipRequestInterceptor;
 import io.grpc.ClientInterceptor;
 import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
 
 public class Lec04GzipInterceptorTest extends AbstractInterceptorTest {
