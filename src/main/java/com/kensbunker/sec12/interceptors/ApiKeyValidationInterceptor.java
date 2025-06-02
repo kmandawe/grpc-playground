@@ -8,8 +8,12 @@ import io.grpc.ServerCallHandler;
 import io.grpc.ServerInterceptor;
 import io.grpc.Status;
 import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ApiKeyValidationInterceptor implements ServerInterceptor {
+
+  private static final Logger LOG = LoggerFactory.getLogger(ApiKeyValidationInterceptor.class);
 
   @Override
   public <ReqT, RespT> Listener<ReqT> interceptCall(
@@ -17,6 +21,7 @@ public class ApiKeyValidationInterceptor implements ServerInterceptor {
       Metadata metadata,
       ServerCallHandler<ReqT, RespT> serverCallHandler) {
 
+    LOG.info("{}", serverCall.getMethodDescriptor().getFullMethodName());
     var apiKey = metadata.get(Constants.API_KEY);
     if (isValid(apiKey)) {
       return serverCallHandler.startCall(serverCall, metadata);
