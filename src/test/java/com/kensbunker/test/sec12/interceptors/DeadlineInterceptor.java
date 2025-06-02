@@ -6,6 +6,7 @@ import io.grpc.ClientCall;
 import io.grpc.ClientInterceptor;
 import io.grpc.MethodDescriptor;
 import java.time.Duration;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class DeadlineInterceptor implements ClientInterceptor {
@@ -19,7 +20,10 @@ public class DeadlineInterceptor implements ClientInterceptor {
   @Override
   public <ReqT, RespT> ClientCall<ReqT, RespT> interceptCall(
       MethodDescriptor<ReqT, RespT> methodDescriptor, CallOptions callOptions, Channel channel) {
-    callOptions = callOptions.withDeadlineAfter(duration.toMillis(), TimeUnit.MILLISECONDS);
+    callOptions =
+        Objects.nonNull(callOptions.getDeadline())
+            ? callOptions
+            : callOptions.withDeadlineAfter(duration.toMillis(), TimeUnit.MILLISECONDS);
     return channel.newCall(methodDescriptor, callOptions);
   }
 }
