@@ -1,5 +1,6 @@
 package com.kensbunker.sec12;
 
+import io.grpc.Context;
 import io.grpc.Metadata;
 
 public class Constants {
@@ -14,5 +15,5 @@ public class Constants {
 
   // Authorization Bearer <token>
 
-
-}
+  public static final Context.Key<UserRole> USER_ROLE_KEY = Context.key("user-role");
+ }
